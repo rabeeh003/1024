@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function Game() {
     const rows = 4;
@@ -216,14 +216,39 @@ function Game() {
         addRandom();
     }
 
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            switch (event.key) {
+                case 'ArrowUp':
+                    handleTopMove();
+                    break;
+                case 'ArrowLeft':
+                    handleLeftMove();
+                    break;
+                case 'ArrowRight':
+                    handleRightMove();
+                    break;
+                case 'ArrowDown':
+                    handleBottomMove();
+                    break;
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyPress);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, []);
+
 
     return (
         <>
-            <div className='bg-slate-600 grid grid-cols-4 gap-4 rounded-md p-2'>
+            <div className='bg-orange-200 grid grid-cols-4 gap-4 rounded-md p-2'>
                 {board.map((row, rowIndex) => (
                     row.map((col, colIndex) => (
-                        <div key={`${rowIndex}-${colIndex}`} className='w-16 h-16 text-black bg-white rounded-md text-center '>
-                            {col > 0 ? col || '' : ''}
+                        <div key={`${rowIndex}-${colIndex}`} className='py-4 w-16 h-16 text-black bg-white rounded-md'>
+                            <span className='text-2xl'>{col > 0 ? col || '' : ''}</span>
                         </div>
                     ))
                 ))}

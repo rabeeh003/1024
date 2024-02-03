@@ -6,8 +6,8 @@ function App() {
 
   return (
     <>
-    {/* <Gptcode/> */}
-    <Game/>
+      <h1 className='font-mono font-semibold text-orange-300 mb-5 text-left'>1024</h1>
+      <Game />
     </>
   );
 }
