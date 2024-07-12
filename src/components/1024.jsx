@@ -1,7 +1,9 @@
-import { Button } from '@nextui-org/react';
+import { Button, Image } from '@nextui-org/react';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Chambian from './Chambian';
+import Loss from './Loss';
 
 function Game() {
     const rows = 4;
@@ -9,24 +11,55 @@ function Game() {
     const [board, setBoard] = useState(() => addRandom(addRandom(initializeBoard())));
     const [move, setMove] = useState(null);
     const [gameOver, setGameOver] = useState(false);
+    const [shoWin, setShoWin] = useState(false);
 
     function initializeBoard() {
         return Array.from({ length: rows }, () => Array(cols).fill(0));
     }
 
-    function addRandom(board) {
+    function addRandom(board, moveDirection) {
         const emptyCells = [];
+        const rows = board.length;
+        const cols = board[0].length;
+
+        // Collect all empty cells
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
                 if (!board[i][j]) {
                     emptyCells.push({ row: i, col: j });
                 }
+                if (board[i][j] == 8 && shoWin === false) {
+                    setShoWin('yes')
+                }
             }
         }
 
+        // Choose a random empty cell
         if (emptyCells.length > 0) {
             const { row, col } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             board[row][col] = Math.random() < 0.9 ? 2 : 4; // 90% chance for 2, 10% chance for 4
+
+            // Adjust position based on move direction
+            switch (moveDirection) {
+                case 'up':
+                    // Add new number to the bottom row
+                    board[rows - 1][col] = Math.random() < 0.9 ? 2 : 4;
+                    break;
+                case 'down':
+                    // Add new number to the top row
+                    board[0][col] = Math.random() < 0.9 ? 2 : 4;
+                    break;
+                case 'left':
+                    // Add new number to the rightmost column
+                    board[row][cols - 1] = Math.random() < 0.9 ? 2 : 4;
+                    break;
+                case 'right':
+                    // Add new number to the leftmost column
+                    board[row][0] = Math.random() < 0.9 ? 2 : 4;
+                    break;
+                default:
+                    break;
+            }
         } else {
             console.log('Game Over');
             setGameOver(true);
@@ -35,6 +68,7 @@ function Game() {
 
         return board;
     }
+
 
     function moveAndCombine(matrix) {
         const rows = matrix.length;
@@ -171,34 +205,40 @@ function Game() {
     }
 
     useEffect(() => {
-        const handleKeyPress = (event) => {
-            event.preventDefault();
-            switch (event.key) {
-                case 'ArrowUp':
-                    setMove('up');
-                    break;
-                case 'ArrowLeft':
-                    setMove('left');
-                    break;
-                case 'ArrowRight':
-                    setMove('right');
-                    break;
-                case 'ArrowDown':
-                    setMove('down');
-                    break;
-                default:
-                    return;
+        if (gameOver) setMove(null);
+        if (shoWin===true) setMove(null);
+
+            const handleKeyPress = (event) => {
+                event.preventDefault();
+                switch (event.key) {
+                    case 'ArrowUp':
+                        setMove('up');
+                        break;
+                    case 'ArrowLeft':
+                        setMove('left');
+                        break;
+                    case 'ArrowRight':
+                        setMove('right');
+                        break;
+                    case 'ArrowDown':
+                        setMove('down');
+                        break;
+                    default:
+                        return;
+                }
+            };
+
+            document.addEventListener('keydown', handleKeyPress);
+
+            return () => {
+                document.removeEventListener('keydown', handleKeyPress);
             }
-        };
-
-        document.addEventListener('keydown', handleKeyPress);
-
-        return () => {
-            document.removeEventListener('keydown', handleKeyPress);
-        };
+        
     }, []);
 
     useEffect(() => {
+        if (gameOver==true) return;
+        if (shoWin==true) return;
         if (!move) return;
 
         setBoard((prevBoard) => {
@@ -219,7 +259,7 @@ function Game() {
                 default:
                     return prevBoard;
             }
-            return addRandom(newBoard);
+            return addRandom(newBoard, move);
         });
 
         setMove(null);
@@ -255,52 +295,56 @@ function Game() {
 
     return (
         <>
-            <div className='bg-gray-500 grid grid-cols-4 gap-2 rounded-md p-2'>
-                {board.map((row, rowIndex) => (
-                    row.map((col, colIndex) => (
-                        <AnimatePresence key={`${rowIndex}-${colIndex}`}>
-                            <motion.div
-                                key={`${rowIndex}-${colIndex}`}
-                                className='py-4 w-16 h-16 text-black rounded-md'
-                                style={{ backgroundColor: getColor(col) }}
-                                variants={motionVariants}
-                                initial="initial"
-                                animate="animate"
-                                exit="exit"
-                                transition={{ duration: 0.2 }}
-                            >
-                                <span className='text-2xl'>{col > 0 ? col || '' : ''}</span>
-                            </motion.div>
-                        </AnimatePresence>
-                    ))
-                ))}
-            </div>
-            {gameOver && (
-                <div className="text-center mt-4">
-                    <p className="text-red-500 text-lg font-semibold">Game Over!</p>
-                    <Button onClick={resetGame}>New Game</Button>
-                </div>
+            {shoWin ? (
+                <Chambian setShoWin={() => setShoWin()} />
+            ) : (
+                <>
+                    {gameOver ? (
+                        <Loss resetGame={() => resetGame()} />
+                    ) : (<>
+                        <div className='bg-gray-500 grid grid-cols-4 gap-2 rounded-md p-2'>
+                            {board.map((row, rowIndex) => (
+                                row.map((col, colIndex) => (
+                                    <AnimatePresence key={`${rowIndex}-${colIndex}`}>
+                                        <motion.div
+                                            key={`${rowIndex}-${colIndex}`}
+                                            className='py-4 w-16 h-16 text-black rounded-md'
+                                            style={{ backgroundColor: getColor(col) }}
+                                            variants={motionVariants}
+                                            initial="initial"
+                                            animate="animate"
+                                            exit="exit"
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            <span className='text-2xl'>{col > 0 ? col || '' : ''}</span>
+                                        </motion.div>
+                                    </AnimatePresence>
+                                ))
+                            ))}
+                        </div>
+                        <div className='flex flex-col w-["40px] mt-6'>
+                            <div className='flex justify-center'>
+                                <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('up')} >
+                                    <ArrowUp />
+                                </Button>
+                            </div>
+                            <div className='flex justify-between'>
+                                <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('left')} >
+                                    <ArrowLeft />
+                                </Button>
+                                <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('right')} >
+                                    <ArrowRight />
+                                </Button>
+                            </div>
+                            <div className='flex justify-center'>
+                                <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('down')} >
+                                    <ArrowDown />
+                                </Button>
+                            </div>
+                        </div>
+                    </>)}
+                </>
             )}
-            <div className='flex flex-col w-["40px] mt-6'>
-                <div className='flex justify-center'>
-                    <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('up')} >
-                        <ArrowUp />
-                    </Button>
-                </div>
-                <div className='flex justify-between'>
-                    <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('left')} >
-                        <ArrowLeft />
-                    </Button>
-                    <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('right')} >
-                        <ArrowRight />
-                    </Button>
-                </div>
-                <div className='flex justify-center'>
-                    <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('down')} >
-                        <ArrowDown />
-                    </Button>
-                </div>
-            </div>
         </>
     );
 }
