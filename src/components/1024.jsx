@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Chambian from './Chambian';
 import Loss from './Loss';
+import Audio from './Audio';
 
 function Game() {
     const rows = 4;
@@ -28,7 +29,7 @@ function Game() {
                 if (!board[i][j]) {
                     emptyCells.push({ row: i, col: j });
                 }
-                if (board[i][j] == 8 && shoWin === false) {
+                if (board[i][j] == 1024 && shoWin === false) {
                     setShoWin('yes')
                 }
             }
