@@ -2,11 +2,12 @@ import { Button, Image } from '@nextui-org/react';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSwipeable } from 'react-swipeable';
 import Chambian from './Chambian';
 import Loss from './Loss';
 import Audio from './Audio';
 
-function Game() {
+function Game({ pad }) {
     const rows = 4;
     const cols = 4;
     const [board, setBoard] = useState(() => addRandom(addRandom(initializeBoard())));
@@ -207,39 +208,39 @@ function Game() {
 
     useEffect(() => {
         if (gameOver) setMove(null);
-        if (shoWin===true) setMove(null);
+        if (shoWin === true) setMove(null);
 
-            const handleKeyPress = (event) => {
-                event.preventDefault();
-                switch (event.key) {
-                    case 'ArrowUp':
-                        setMove('up');
-                        break;
-                    case 'ArrowLeft':
-                        setMove('left');
-                        break;
-                    case 'ArrowRight':
-                        setMove('right');
-                        break;
-                    case 'ArrowDown':
-                        setMove('down');
-                        break;
-                    default:
-                        return;
-                }
-            };
-
-            document.addEventListener('keydown', handleKeyPress);
-
-            return () => {
-                document.removeEventListener('keydown', handleKeyPress);
+        const handleKeyPress = (event) => {
+            event.preventDefault();
+            switch (event.key) {
+                case 'ArrowUp':
+                    setMove('up');
+                    break;
+                case 'ArrowLeft':
+                    setMove('left');
+                    break;
+                case 'ArrowRight':
+                    setMove('right');
+                    break;
+                case 'ArrowDown':
+                    setMove('down');
+                    break;
+                default:
+                    return;
             }
-        
+        };
+
+        document.addEventListener('keydown', handleKeyPress);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyPress);
+        }
+
     }, []);
 
     useEffect(() => {
-        if (gameOver==true) return;
-        if (shoWin==true) return;
+        if (gameOver == true) return;
+        if (shoWin == true) return;
         if (!move) return;
 
         setBoard((prevBoard) => {
@@ -294,8 +295,17 @@ function Game() {
         exit: { opacity: 0, scale: 0.8 }
     };
 
+    const handlers = useSwipeable({
+        onSwipedUp: () => setMove('up'),
+        onSwipedDown: () => setMove('down'),
+        onSwipedLeft: () => setMove('left'),
+        onSwipedRight: () => setMove('right'),
+        preventDefaultTouchmoveEvent: true,
+        trackMouse: true // for testing on desktop
+    });
+
     return (
-        <>
+        <div {...handlers}>
             {shoWin ? (
                 <Chambian setShoWin={() => setShoWin()} />
             ) : (
@@ -323,30 +333,34 @@ function Game() {
                                 ))
                             ))}
                         </div>
-                        <div className='flex flex-col w-["40px] mt-6'>
-                            <div className='flex justify-center'>
-                                <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('up')} >
-                                    <ArrowUp />
-                                </Button>
+                        {pad && (
+
+                            <div className='flex flex-col w-["40px] mt-6'>
+                                <div className='flex justify-center'>
+                                    <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('up')} >
+                                        <ArrowUp />
+                                    </Button>
+                                </div>
+                                <div className='flex justify-between'>
+                                    <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('left')} >
+                                        <ArrowLeft />
+                                    </Button>
+                                    <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('right')} >
+                                        <ArrowRight />
+                                    </Button>
+                                </div>
+                                <div className='flex justify-center'>
+                                    <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('down')} >
+                                        <ArrowDown />
+                                    </Button>
+                                </div>
                             </div>
-                            <div className='flex justify-between'>
-                                <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('left')} >
-                                    <ArrowLeft />
-                                </Button>
-                                <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('right')} >
-                                    <ArrowRight />
-                                </Button>
-                            </div>
-                            <div className='flex justify-center'>
-                                <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('down')} >
-                                    <ArrowDown />
-                                </Button>
-                            </div>
-                        </div>
+                        )}
+
                     </>)}
                 </>
             )}
-        </>
+        </div>
     );
 }
 

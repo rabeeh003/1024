@@ -15,8 +15,11 @@
     "lucide-react": "^0.407.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-howler": "^5.2.0"
+    "react-howler": "^5.2.0",
+    "react-swipeable": "^7.0.1"
   },
+  "license": "MIT",
+  "author": "rabeeh003",
   "devDependencies": {
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
