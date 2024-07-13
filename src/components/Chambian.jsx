@@ -14,7 +14,7 @@ import sample12 from '../assets/meems/win11.gif'
 
 import { Button, Image } from '@nextui-org/react'
 
-function Chambian({ setShoWin }) {
+function Chambian({ setShoWin, resetGame }) {
   const images = [
     sample, sample1, sample2, sample3,
     sample5, sample6, sample7, sample8,
@@ -26,9 +26,11 @@ function Chambian({ setShoWin }) {
   return (
     <div className="text-center mt-4">
       <p className="text-green-500 text-lg font-semibold">You win</p>
+      <div className='w-full flex justify-center'>
       <Image className='mb-4' src={randomImage} />
+      </div>
       <div className='flex justify-between'>
-        <Button variant='shadow' className='text-white' color='success' onClick={() => location.reload()}>Play again</Button>
+        <Button variant='shadow' className='text-white' color='success' onClick={resetGame}>Play again</Button>
         <Button variant='shadow' className='text-white' color='success' onClick={setShoWin}>Continue</Button>
       </div>
     </div>

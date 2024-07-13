@@ -4,7 +4,7 @@ import ReactHowler from 'react-howler';
 import { songs } from './songs';
 import { Pause, PlayCircleIcon } from 'lucide-react';
 
-function Audio() {
+function AudioComponent() {
     const [currentSong, setCurrentSong] = useState(songs[0]);
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -58,4 +58,4 @@ function Audio() {
     );
 }
 
-export default Audio;
+export default AudioComponent;
