@@ -194,6 +194,7 @@ function Game({ pad, setPad, onMusic, setOnMusic }) {
                     setMove('right');
                     break;
                 case 'ArrowDown':
+                    event.preventDefault();
                     setMove('down');
                     break;
                 default:
@@ -335,7 +336,6 @@ function Game({ pad, setPad, onMusic, setOnMusic }) {
                             ))}
                         </div>
                         {pad && (
-
                             <div className='flex flex-col w-["40px] mt-6'>
                                 <div className='flex justify-center'>
                                     <Button variant='ghost' className='bg-gray-500' color='' onClick={() => setMove('up')} >

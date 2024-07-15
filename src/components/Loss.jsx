@@ -49,7 +49,7 @@ function Loss({resetGame}) {
     
       return (
         <div className="text-center mt-4">
-          <p className="text-red-500 text-lg font-semibold">You losts!</p>
+          <p className="text-red-500 text-lg font-semibold">You lost!</p>
           <Image className='mb-4 max-w-[300px]' src={randomImage} />
           <Button variant='shadow' color='success' onClick={resetGame}>Restart</Button>
         </div>

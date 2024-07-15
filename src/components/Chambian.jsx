@@ -25,7 +25,7 @@ function Chambian({ setShoWin, resetGame }) {
 
   return (
     <div className="text-center mt-4">
-      <p className="text-green-500 text-lg font-semibold">You win</p>
+      <p className="text-green-500 text-lg font-semibold">You won</p>
       <div className='w-full flex justify-center'>
       <Image className='mb-4' src={randomImage} />
       </div>
