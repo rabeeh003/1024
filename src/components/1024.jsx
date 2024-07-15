@@ -1,5 +1,6 @@
-import { Button, Image, Switch } from '@nextui-org/react';
+import { Button, Switch } from '@nextui-org/react';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Gamepad2, Music, VolumeX } from 'lucide-react';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSwipeable } from 'react-swipeable';
